@@ -10,12 +10,12 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-2"
+  region = "us-west-2"
 }
 
 resource "aws_instance" "example" {
-  ami                    = "ami-0fb653ca2d3203ac1"
-  instance_type          = "t2.micro"
+  ami                    = "ami-095413544ce52437d"
+  instance_type          = "t3.micro"
   vpc_security_group_ids = [aws_security_group.instance.id]
 
   user_data = <<-EOF
