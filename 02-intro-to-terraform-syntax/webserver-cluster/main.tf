@@ -20,13 +20,24 @@ resource "aws_launch_configuration" "example" {
 
   user_data = <<-EOF
               #!/bin/bash
-              echo "Hello, World" > index.html
+              echo "I am learning" > index.html
               nohup busybox httpd -f -p ${var.server_port} &
               EOF
 
   # Required when using a launch configuration with an auto scaling group.
   lifecycle {
     create_before_destroy = true
+  }
+}
+
+resource "aws_security_group" "instance" {
+  name = var.instance_security_group_name
+
+  ingress {
+    from_port   = var.server_port
+    to_port     = var.server_port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
@@ -44,17 +55,6 @@ resource "aws_autoscaling_group" "example" {
     key                 = "Name"
     value               = "terraform-asg-example"
     propagate_at_launch = true
-  }
-}
-
-resource "aws_security_group" "instance" {
-  name = var.instance_security_group_name
-
-  ingress {
-    from_port   = var.server_port
-    to_port     = var.server_port
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
