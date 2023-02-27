@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: A simple template to create a single bucket
+
+Parameters:
+  BucketPrefix:
+    Description: Pick a name for your bucket prefix
+    Type: String
+    AllowedPattern: "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"
+    ConstraintDescription: "Bucket prefix cannot start with a hyphen(-) and must be between 3 to 63 characters log and contain only lowercase, numbers, and hyphens"
+
+Resources: 
+  s3Bucket:
+    Type: AWS::S3::Bucket
+    Properties: 
+      BucketName: !Sub ${BucketPrefix}-${AWS::StackName}-${AWS::Region}-${AWS::AccountId}
+
+Outputs:
+  BucketName:
+    Description: The s3 Bucket name
+    Value: !Ref s3Bucket
