@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Basic EC2 Server
+
+Parameters:
+  AmiID:
+    Description: The ID of the AMI.
+    Type: AWS::EC2::Image::Id
+
+  InstanceType:
+    Description: The EC2 Server Type
+    Type: String
+    Default: t3.micro
+
+Resources:
+  WebServerInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref AmiID
+      InstanceType: !Ref InstanceType

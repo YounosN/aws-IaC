@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: A Basic EC2 server for two different environments. Prod and Dev
+
+Parameters:
+  S3BucketName:
+    Description: S3 bucket name for the Nested Stacks.
+    Type: String
+    AllowedPattern: ^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$
+    ConstraintDescription: "Bucket prefix cannot start with a hyphen(-) and must be between 3 to 63 characters log and contain only lowercase, numbers, and hyphens"
+
+  EnvironmentType:
+    Description: Specify the Environment type.
+    Type: String
+    AllowedValues:
+      - Dev
+      - Prod
+    Default: Dev
+    ConstraintDescription: Specify either Dev or Prod.
+
+  AmiID:
+    Description: The ID of the AMI.
+    Type: String
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+
+Resources:
+  Bucket:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        BucketPrefix: mybucket
+      TemplateURL: !Sub https://${S3BucketName}.s3.amazonaws.com/01-s3.yml
+      TimeoutInMinutes: 10
+  
+  WebServer:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        EnvironmentType: !Ref EnvironmentType
+        AmiID: !Ref AmiID
+      TemplateURL: !Sub https://${S3BucketName}.s3.amazonaws.com/04-conditions.yml
+      TimeoutInMinutes: 20
+
+Outputs:
+  Bucket:
+    Description: The s3 Bucket name
+    Value: !GetAtt Bucket.Outputs.BucketName

@@ -12,7 +12,7 @@ Resources:
   s3Bucket:
     Type: AWS::S3::Bucket
     Properties: 
-      BucketName: !Sub ${BucketPrefix}-${AWS::StackName}-${AWS::Region}-${AWS::AccountId}
+      BucketName: !Sub ${BucketPrefix}-${AWS::Region}-${AWS::AccountId}
 
 Outputs:
   BucketName:

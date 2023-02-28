@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: A Basic EC2 server for two different environments. Prod and Dev
+
+Parameters:
+  EnvironmentType:
+    Description: Specify the Environment type.
+    Type: String
+    AllowedValues:
+      - Dev
+      - Prod
+    Default: Dev
+    ConstraintDescription: Specify either Dev or Prod.
+
+  AmiID:
+    Description: The ID of the AMI.
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+
+Mappings:
+  EnvironmentToInstanceType:
+    Dev:
+      InstanceType: t3.micro
+    Prod:
+      InstanceType: t3.medium
+
+Resources:
+  WebServerInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref AmiID
+      InstanceType: !FindInMap [EnvironmentToInstanceType, !Ref EnvironmentType, InstanceType]
+      Tags:
+        - Key: Name
+          Value: !Join ['-', [!Ref EnvironmentType, webserver]]
